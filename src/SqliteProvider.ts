@@ -20,7 +20,7 @@ export class KeyvSqliteProvider {
     this.collection = new Collection();
   }
 
-  async init() {
+  init() {
     const all = [
       ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
     ];
