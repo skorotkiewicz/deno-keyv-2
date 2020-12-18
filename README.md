@@ -59,7 +59,7 @@ soon™
 
 If you need help regarding the library, feel free to open a [issue](https://github.com/CyberKnight007/deno-keyv/issues) or ask in the [Help discussions category](https://github.com/CyberKnight007/deno-keyv/discussions/categories/help) on github. You can also DM me on discord `Tejas#9134`.
 
-### Do you want to make discord bots in deno?
+## Do you want to make discord bots in deno?
 
 Why not check out [Harmony](https://github.com/harmony-org/harmony)!
 
