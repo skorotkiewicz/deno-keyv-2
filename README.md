@@ -11,6 +11,10 @@ Keyv is a simple and lightweight, easy to use database wrapper made for the Java
 - Supports dot notation.
   _And much more!_
 
+## Usage
+- [Stable](https://deno.land/x/keyv) `import { DB } from "https://deno.land/x/mod.ts";`
+- [Main](https://github.com/CyberKnight007/deno-keyv) `import { DB } from "https://raw.githubusercontent.com/CyberKnight007/deno-keyv/main/mod.ts";` **Main may contain bugs**
+
 ## Examples
 
 ```typescript
@@ -44,13 +48,6 @@ console.log(age);
 // Output -> 33
 ```
 
-## Contributing
-
-Pull Requests are always welcome. Just make sure to open a issue and inform us what you are working so that we can confirm if we want it in the repository or not.
-
-- We use [deno fmt](https://deno.land/manual/tools/formatter) for formatting our files. We recommend you use it too if you wish to contribute.
-- Please do not add any more third party modules to the library without confirming with us first.
-
 ## Docs
 
 soon™
@@ -58,6 +55,13 @@ soon™
 ## Support
 
 If you need help regarding the wrapper, feel free to open a [issue](https://github.com/CyberKnight007/deno-keyv/issues) or ask in the [Help discussions category](https://github.com/CyberKnight007/deno-keyv/discussions/categories/help) on github. You can also DM me on discord `Tejas#9134`.
+
+## Contributing
+
+Pull Requests are always welcome. Just make sure to open a issue and inform us what you are working so that we can confirm if we want it in the repository or not.
+
+- We use [deno fmt](https://deno.land/manual/tools/formatter) for formatting our files. We recommend you use it too if you wish to contribute.
+- Please do not add any more third party modules to the library without confirming with us first.
 
 ## Do you want to make discord bots in deno?
 
