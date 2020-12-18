@@ -53,7 +53,7 @@ Pull Requests are always welcome. Just make sure to open a issue and inform us w
 
 ## Docs
 
-soon:tm:
+soon™
 
 ## Support
 
@@ -76,5 +76,5 @@ Why not check out [Harmony](https://github.com/harmony-org/harmony)!
 
 ---
 
-Made with ❤ by [Tejas Agarwal](https://github.com/CyberKnight007)
-MIT License. Copyright 2020 :copyright: All rights reserved.
+Made with ❤ by [Tejas Agarwal](https://github.com/CyberKnight007) <br/>
+MIT License. Copyright 2020  All rights reserved.
