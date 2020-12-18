@@ -18,11 +18,20 @@ await db.set("user.gender", "male");
 await db.set("user.age", 33);
 // Data -> 'user': { 'name': 'Alex', 'gender': 'male', 'age': 33}
 
+const age = await db.get("user.age");
+console.log(age);
+// Output -> 33
+
+await db.push("user.children", "Suzy");
+await db.push("user.name", "Johnson");
+
+const all = await db.all();
+console.log(all);
+
+console.log(await db.has("user.hehe"));
+console.log(await db.has("user.name"));
+
 // Getting the data from the database
 const data = await db.get("user");
 console.log(data);
 // Output -> { 'name': 'Alex', 'gender': 'male', 'age': 33}
-
-const age = await db.get("user.age");
-console.log(age);
-// Output -> 33
