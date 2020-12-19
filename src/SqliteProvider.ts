@@ -88,7 +88,6 @@ export class KeyvSqliteProvider {
    * @param k The value you want to get.
    * @param def The default value to get if the original key wasnt found.
    * @return The value fetched from the database.
-   * @example
    * let db = new Sqlite("db.sqlite", "userinfo");
    * await db.get("john")
    */
@@ -105,7 +104,7 @@ export class KeyvSqliteProvider {
       if (!exists) {
         await this.set(k, def || "");
       }
-      data = _.get(collection, prop, "owo");
+      data = _.get(collection, prop, null);
     } else {
       let exists = this.collection.has(k);
       if (!exists) {
@@ -126,5 +125,62 @@ export class KeyvSqliteProvider {
       return;
     }
     await this.get(k);
+  }
+
+  /**
+   * Push a item to a array. If the array does not exist, then it will make a new array!
+   * @param k The key to the array in the database.
+   * @param v The value to add in the array.
+   */
+  async push(k: string, v: any) {
+    let fetched = await this.get(k);
+    if (!fetched) {
+      let array = [];
+      array.push(v);
+      await this.set(k, array);
+    } else {
+      if (!Array.isArray(fetched)) {
+        let array = [];
+        array.push(fetched);
+        array.push(v);
+        await this.set(k, array);
+      } else {
+        fetched.push(v);
+        await this.set(k, fetched);
+      }
+    }
+    return await this.get(k);
+  }
+
+  /**
+   * Select all keys from the database!
+   */
+  async all() {
+    let fetched = [
+      ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
+    ];
+    let data = new Map();
+    for (const o of fetched) {
+      let value = JSON.parse(o.value);
+      data.set(o.key, value);
+    }
+    return data;
+  }
+
+
+/**
+ * Check if the database contains a specific value or not!
+ * @param k The value to check.
+ */
+  async has(k: string) {
+    if (k.includes(".")) {
+      let split = k.split(".");
+      let first = split[0];
+      let collection = await this.get(first);
+      split.shift();
+      let prop = split.join(".");
+      return _.has(collection, prop);
+    }
+    return this.collection.has(k);
   }
 }
