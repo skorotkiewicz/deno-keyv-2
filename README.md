@@ -1,4 +1,5 @@
-![](./banner.png)
+<img align=right src="https://media.discordapp.net/attachments/770613980632449032/790552609617477642/banner.png?width=572&height=559" height="300" />
+
 # Deno Keyv
 Keyv is a simple and lightweight, easy to use database wrapper made for the Javascript runtime envoirement, [Deno](https://deno.land/). The wrapper is designed for quick setup and fast results.
 
