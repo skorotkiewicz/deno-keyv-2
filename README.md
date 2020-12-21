@@ -1,4 +1,6 @@
-## Deno Keyv
+
+<img align=right src=banner.png height=300px>
+# Deno Keyv
 
 Keyv is a simple and lightweight, easy to use database wrapper made for the Javascript runtime envoirement, [Deno](https://deno.land/). The wrapper is designed for quick setup and fast results.
 
@@ -12,6 +14,7 @@ Keyv is a simple and lightweight, easy to use database wrapper made for the Java
   _And much more!_
 
 ## Usage
+
 - [Stable](https://deno.land/x/keyv) `import { DB } from "https://deno.land/x/mod.ts";`
 - [Main](https://github.com/CyberKnight007/deno-keyv) `import { DB } from "https://raw.githubusercontent.com/CyberKnight007/deno-keyv/main/mod.ts";` **Main may contain bugs**
 
@@ -81,4 +84,4 @@ Why not check out [Harmony](https://github.com/harmony-org/harmony)!
 ---
 
 Made with ❤ by [Tejas Agarwal](https://github.com/CyberKnight007) <br/>
-MIT License. Copyright 2020  All rights reserved.
+MIT License. Copyright 2020 All rights reserved.
