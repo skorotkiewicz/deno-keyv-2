@@ -1,7 +1,7 @@
 
-<img align=right src=banner.png height=300px>
 # Deno Keyv
 
+<img align=right src=banner.png height=300px>
 Keyv is a simple and lightweight, easy to use database wrapper made for the Javascript runtime envoirement, [Deno](https://deno.land/). The wrapper is designed for quick setup and fast results.
 
 ## Why Keyv?
