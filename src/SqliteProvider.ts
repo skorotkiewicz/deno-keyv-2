@@ -186,12 +186,12 @@ export class KeyvSqliteProvider {
 
   /**
    * Check if the database contains a specific value or not!
-   * @param {string} key The value to check.
-   * @async
-   * @returns {boolean} Whether the database has the key or not
-   * @example
+   * @param key The value to check.
+   * @returns Whether the database has the key or not
+   * ```ts
    * let db = new DB("db.sqlite", "userinfo");
    * await db.has("john");
+   * ```
    */
   async has(k: string) {
     if (k.includes(".")) {
