@@ -3,8 +3,9 @@ import { ld as _ } from "https://deno.land/x/deno_lodash/mod.ts";
 
 /**
  * Simple and easy to use key-v Sqlite Provider for deno
- * @param databaseFilePath The filepath for the `.sqlite` file.
- * @param tablename The name of the table for storing data.
+ * @class
+ * @param {string} databaseFilePath The filepath for the `.sqlite` file.
+ * @param {string} tablename The name of the table for storing data.
  */
 export class KeyvSqliteProvider {
   db: DB;
@@ -14,12 +15,15 @@ export class KeyvSqliteProvider {
   constructor(databaseFilePath: string, tablename: string) {
     this.db = new DB(databaseFilePath);
     this.db.query(
-      `CREATE TABLE IF NOT EXISTS ${tablename}(id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT, value TEXT)`,
+      `CREATE TABLE IF NOT EXISTS ${tablename}(id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT, value TEXT)`
     );
     this.tablename = tablename;
     this.collection = new Collection();
   }
 
+  /**
+   * Initiate the database.
+   */
   init() {
     const all = [
       ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
@@ -31,10 +35,11 @@ export class KeyvSqliteProvider {
 
   /**
    * Set a value to the database
-   * @param k The key to the value
-   * @param value The value
-   * @return The updated value in the database.
-   * @example 
+   * @param {string} key The key to the value
+   * @param {any} value The value
+   * @returns {Object} The updated value in the database.
+   * @async
+   * @example
    * let db = new Sqlite("db.sqlite", "userinfo");
    * await db.set("john.gender", "male");
    */
@@ -56,38 +61,39 @@ export class KeyvSqliteProvider {
     }
 
     let fetchQuery = [
-      ...this.db.query(
-        `SELECT * FROM ${this.tablename} WHERE key = ?`,
-        [k],
-      ).asObjects(),
+      ...this.db
+        .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [k])
+        .asObjects(),
     ];
     if (fetchQuery.length <= 0) {
       this.db.query(
         `INSERT INTO ${this.tablename} (key, value) VALUES (?, ?)`,
-        [k, JSON.stringify(lodashedData)],
+        [k, JSON.stringify(lodashedData)]
       );
       fetchQuery = [
-        ...this.db.query(
-          `SELECT * FROM ${this.tablename} WHERE key = ?`,
-          [k],
-        ).asObjects(),
+        ...this.db
+          .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [k])
+          .asObjects(),
       ];
     }
-    this.db.query(
-      `UPDATE ${this.tablename} SET value = ? WHERE key = ?`,
-      [JSON.stringify(lodashedData), k],
-    );
+    this.db.query(`UPDATE ${this.tablename} SET value = ? WHERE key = ?`, [
+      JSON.stringify(lodashedData),
+      k,
+    ]);
     return [
-      ...this.db.query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [k])
+      ...this.db
+        .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [k])
         .asObjects(),
     ][0];
   }
 
   /**
    * Get a value from the database
-   * @param k The value you want to get.
-   * @param def The default value to get if the original key wasnt found.
-   * @return The value fetched from the database.
+   * @param {string} key The value you want to get.
+   * @param {boolean} [default] The default value to get if the original key wasnt found.
+   * @returns {any} The value fetched from the database.
+   * @async
+   * @example
    * let db = new Sqlite("db.sqlite", "userinfo");
    * await db.get("john")
    */
@@ -118,6 +124,7 @@ export class KeyvSqliteProvider {
 
   /**
    * Alias to the `.get` method.
+   * @async
    */
   async fetch(k: string, def?: string) {
     if (def) {
@@ -129,8 +136,13 @@ export class KeyvSqliteProvider {
 
   /**
    * Push a item to a array. If the array does not exist, then it will make a new array!
-   * @param k The key to the array in the database.
-   * @param v The value to add in the array.
+   * @param {string} key The key to the array in the database.
+   * @param {any} value The value to add in the array.
+   * @async
+   * @returns {any} The new value of the key.
+   * @example
+   * let db = new DB("db.sqlite", "userinfo");
+   * await db.push("john.children", "Suzy");
    */
   async push(k: string, v: any) {
     let fetched = await this.get(k);
@@ -154,6 +166,11 @@ export class KeyvSqliteProvider {
 
   /**
    * Select all keys from the database!
+   * @returns {Map} Map of all data in the database
+   * @async
+   * @example
+   * let db = new DB("db.sqlite", "userinfo");
+   * await db.all();
    */
   async all() {
     let fetched = [
@@ -167,11 +184,15 @@ export class KeyvSqliteProvider {
     return data;
   }
 
-
-/**
- * Check if the database contains a specific value or not!
- * @param k The value to check.
- */
+  /**
+   * Check if the database contains a specific value or not!
+   * @param {string} key The value to check.
+   * @async
+   * @returns {boolean} Whether the database has the key or not
+   * @example
+   * let db = new DB("db.sqlite", "userinfo");
+   * await db.has("john");
+   */
   async has(k: string) {
     if (k.includes(".")) {
       let split = k.split(".");
