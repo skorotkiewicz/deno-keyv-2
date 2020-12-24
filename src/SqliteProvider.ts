@@ -188,6 +188,7 @@ export class KeyvSqliteProvider {
    * Check if the database contains a specific value or not!
    * @param key The value to check.
    * @returns Whether the database has the key or not
+   * **param** Key*: string* - Something something
    * ```ts
    * let db = new DB("db.sqlite", "userinfo");
    * await db.has("john");
