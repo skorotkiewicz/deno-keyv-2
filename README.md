@@ -65,22 +65,7 @@ Pull Requests are always welcome. Just make sure to open a issue and inform us w
 - We use [deno fmt](https://deno.land/manual/tools/formatter) for formatting our files. We recommend you use it too if you wish to contribute.
 - Please do not add any more third party modules to the library without confirming with us first.
 
-## Do you want to make discord bots in deno?
-
-Why not check out [Harmony](https://github.com/harmony-org/harmony)!
-
-- Lightweight and easy to use.
-- Built-in Command Framework,
-  - Easily build Commands on the fly.
-  - Completely Customizable.
-  - Complete Object-Oriented approach.
-- 100% Discord API Coverage.
-- Customizable caching.
-  - Built in support for Redis.
-  - Write Custom Cache Adapters.
-- Complete TypeScript support.
-
 ---
 
-Made with ❤ by [Tejas Agarwal](https://github.com/CyberKnight007) <br/>
+Made with ❤ by [Tejas Agarwal](https://github.com/tejasag) <br/>
 MIT License. Copyright 2020 All rights reserved.
