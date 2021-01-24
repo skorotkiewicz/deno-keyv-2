@@ -52,7 +52,7 @@ console.log(age);
 
 ## Docs
 
-soon™
+[View Documentation here](https://keyv.mod.land)
 
 ## Support
 
