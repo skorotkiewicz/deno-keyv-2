@@ -1,6 +1,7 @@
-<img align=right src="https://media.discordapp.net/attachments/770613980632449032/790552609617477642/banner.png?width=572&height=559" height="300" />
+<img align="right" src="https://media.discordapp.net/attachments/770613980632449032/790552609617477642/banner.png?width=572&height=559" height="300" />
 
 # Deno Keyv
+
 Keyv is a simple and lightweight, easy to use database wrapper made for the Javascript runtime envoirement, [Deno](https://deno.land/). The wrapper is designed for quick setup and fast results.
 
 ## Why Keyv?
@@ -15,11 +16,12 @@ Keyv is a simple and lightweight, easy to use database wrapper made for the Java
 ## Usage
 
 - [Stable](https://deno.land/x/keyv) `import { DB } from "https://deno.land/x/mod.ts";`
-- [Main](https://github.com/CyberKnight007/deno-keyv) `import { DB } from "https://raw.githubusercontent.com/CyberKnight007/deno-keyv/main/mod.ts";` **Main may contain bugs**
+- [Main](https://github.com/OwOland/deno-keyv) `import { DB } from "https://raw.githubusercontent.com/OwOland/deno-keyv/main/mod.ts";` **Main may contain bugs**
 
 ## Examples
 
 ```typescript
+// ================USE THE FOLLOWING FOR SQLITE=======================
 import { DB } from "https://deno.land/x/keyv/mod.ts";
 
 // Need to make a new file called `db.sqlite` in your folder.
@@ -27,7 +29,15 @@ import { DB } from "https://deno.land/x/keyv/mod.ts";
 const db = new DB("db.sqlite", "userinfo");
 
 // Important line to write before doing any operations!
+db.init();
+
+// ================USE THE FOLLOWING FOR PostgreSQL=======================
+import {PostgresProvider} from "https://deno.land/x/keyv/mod.ts";
+
+const db = new PostgresProvider("userinfo", "username", "database", "hostname", "password");
 await db.init();
+
+
 
 // Set an object in the database.
 //            Key           Value
@@ -52,11 +62,11 @@ console.log(age);
 
 ## Docs
 
-[View Documentation here](https://keyv.mod.land)
+[View Documentation Here](https://keyv.mod.land)
 
 ## Support
 
-If you need help regarding the wrapper, feel free to open a [issue](https://github.com/CyberKnight007/deno-keyv/issues) or ask in the [Help discussions category](https://github.com/CyberKnight007/deno-keyv/discussions/categories/help) on github. You can also DM me on discord `Tejas#9134`.
+If you need help regarding the wrapper, feel free to open a [issue](https://github.com/OwOland/deno-keyv/issues) or ask in the [Help discussions category](https://github.com/OwOland/deno-keyv/discussions/categories/help) on github. You can also DM me on discord `Tejas#9134`.
 
 ## Contributing
 
@@ -67,5 +77,5 @@ Pull Requests are always welcome. Just make sure to open a issue and inform us w
 
 ---
 
-Made with ❤ by [Tejas Agarwal](https://github.com/tejasag) <br/>
-MIT License. Copyright 2020 All rights reserved.
+Made with ❤ by [Tejas Agarwal](https://github.com/tejasag) 
+MIT License. Copyright 2021 All rights reserved.

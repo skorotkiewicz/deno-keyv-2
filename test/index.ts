@@ -12,7 +12,9 @@ await db.init();
 await db.set("user", { name: "Alex" });
 // Data -> 'user': { 'name': 'Alex' }
 
-await db.set("user.gender", "male");
+const gender = "Male"
+
+await db.set("user.gender", gender);
 // Data -> 'user': { 'name': 'Alex', 'gender': 'male' }
 
 await db.set("user.age", 33);
@@ -35,3 +37,4 @@ console.log(await db.has("user.name"));
 const data = await db.get("user");
 console.log(data);
 // Output -> { 'name': 'Alex', 'gender': 'male', 'age': 33}
+
