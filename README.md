@@ -16,11 +16,12 @@ Keyv is a simple and lightweight, easy to use database wrapper made for the Java
 ## Usage
 
 - [Stable](https://deno.land/x/keyv) `import { DB } from "https://deno.land/x/mod.ts";`
-- [Main](https://github.com/tejasag/deno-keyv) `import { DB } from "https://raw.githubusercontent.com/tejasag/deno-keyv/main/mod.ts";` **Main may contain bugs**
+- [Main](https://github.com/OwOland/deno-keyv) `import { DB } from "https://raw.githubusercontent.com/OwOland/deno-keyv/main/mod.ts";` **Main may contain bugs**
 
 ## Examples
 
 ```typescript
+// ================USE THE FOLLOWING FOR SQLITE=======================
 import { DB } from "https://deno.land/x/keyv/mod.ts";
 
 // Need to make a new file called `db.sqlite` in your folder.
@@ -29,6 +30,14 @@ const db = new DB("db.sqlite", "userinfo");
 
 // Important line to write before doing any operations!
 db.init();
+
+// ================USE THE FOLLOWING FOR PostgreSQL=======================
+import {PostgresProvider} from "https://deno.land/x/keyv/mod.ts";
+
+const db = new PostgresProvider("userinfo", "username", "database", "hostname", "password");
+await db.init();
+
+
 
 // Set an object in the database.
 //            Key           Value
@@ -57,7 +66,7 @@ soon™
 
 ## Support
 
-If you need help regarding the wrapper, feel free to open a [issue](https://github.com/tejasag/deno-keyv/issues) or ask in the [Help discussions category](https://github.com/tejasag/deno-keyv/discussions/categories/help) on github. You can also DM me on discord `Tejas#9134`.
+If you need help regarding the wrapper, feel free to open a [issue](https://github.com/OwOland/deno-keyv/issues) or ask in the [Help discussions category](https://github.com/OwOland/deno-keyv/discussions/categories/help) on github. You can also DM me on discord `Tejas#9134`.
 
 ## Contributing
 
