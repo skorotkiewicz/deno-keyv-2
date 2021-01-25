@@ -1,6 +1,7 @@
-<img align=right src="https://media.discordapp.net/attachments/770613980632449032/790552609617477642/banner.png?width=572&height=559" height="300" />
+<img align="right" src="https://media.discordapp.net/attachments/770613980632449032/790552609617477642/banner.png?width=572&height=559" height="300" />
 
 # Deno Keyv
+
 Keyv is a simple and lightweight, easy to use database wrapper made for the Javascript runtime envoirement, [Deno](https://deno.land/). The wrapper is designed for quick setup and fast results.
 
 ## Why Keyv?
@@ -15,7 +16,7 @@ Keyv is a simple and lightweight, easy to use database wrapper made for the Java
 ## Usage
 
 - [Stable](https://deno.land/x/keyv) `import { DB } from "https://deno.land/x/mod.ts";`
-- [Main](https://github.com/CyberKnight007/deno-keyv) `import { DB } from "https://raw.githubusercontent.com/CyberKnight007/deno-keyv/main/mod.ts";` **Main may contain bugs**
+- [Main](https://github.com/tejasag/deno-keyv) `import { DB } from "https://raw.githubusercontent.com/tejasag/deno-keyv/main/mod.ts";` **Main may contain bugs**
 
 ## Examples
 
@@ -27,7 +28,7 @@ import { DB } from "https://deno.land/x/keyv/mod.ts";
 const db = new DB("db.sqlite", "userinfo");
 
 // Important line to write before doing any operations!
-await db.init();
+db.init();
 
 // Set an object in the database.
 //            Key           Value
@@ -56,7 +57,7 @@ soon™
 
 ## Support
 
-If you need help regarding the wrapper, feel free to open a [issue](https://github.com/CyberKnight007/deno-keyv/issues) or ask in the [Help discussions category](https://github.com/CyberKnight007/deno-keyv/discussions/categories/help) on github. You can also DM me on discord `Tejas#9134`.
+If you need help regarding the wrapper, feel free to open a [issue](https://github.com/tejasag/deno-keyv/issues) or ask in the [Help discussions category](https://github.com/tejasag/deno-keyv/discussions/categories/help) on github. You can also DM me on discord `Tejas#9134`.
 
 ## Contributing
 
@@ -65,22 +66,7 @@ Pull Requests are always welcome. Just make sure to open a issue and inform us w
 - We use [deno fmt](https://deno.land/manual/tools/formatter) for formatting our files. We recommend you use it too if you wish to contribute.
 - Please do not add any more third party modules to the library without confirming with us first.
 
-## Do you want to make discord bots in deno?
-
-Why not check out [Harmony](https://github.com/harmony-org/harmony)!
-
-- Lightweight and easy to use.
-- Built-in Command Framework,
-  - Easily build Commands on the fly.
-  - Completely Customizable.
-  - Complete Object-Oriented approach.
-- 100% Discord API Coverage.
-- Customizable caching.
-  - Built in support for Redis.
-  - Write Custom Cache Adapters.
-- Complete TypeScript support.
-
 ---
 
-Made with ❤ by [Tejas Agarwal](https://github.com/CyberKnight007) <br/>
-MIT License. Copyright 2020 All rights reserved.
+Made with ❤ by [Tejas Agarwal](https://github.com/tejasag) 
+MIT License. Copyright 2021 All rights reserved.

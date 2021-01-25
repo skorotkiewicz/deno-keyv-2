@@ -1,37 +1,51 @@
-import { Collection, DB, _ } from "../deps.ts";
+import { Pool, PoolClient, _, Collection } from "../deps.ts";
 
-/**
- * Simple and easy to use key-v Sqlite Provider for deno
- * @param databaseFilePath The filepath for the `.sqlite` file.
- * @param tablename The name of the table for storing data.
- * ```ts
- * const db = new DB("./database.sqlite", "userinfo")
- * ```
- */
-export class SqliteProvider {
-  private db: DB;
+export class PostgresProvider {
+  private db: Pool;
   private collection: Collection;
-  private tablename: string;
+  private tablename: String;
+  private clientOptions: Object;
 
-  constructor(databaseFilePath: string, tablename: string) {
-    this.db = new DB(databaseFilePath);
-    this.db.query(
-      `CREATE TABLE IF NOT EXISTS ${tablename}(id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT, value TEXT)`
-    );
+  constructor(
+    tablename: String,
+    user: String,
+    database: String,
+    hostname: String,
+    password: String,
+    port?: number
+  ) {
+    this.clientOptions = {
+      user,
+      database,
+      hostname,
+      password,
+      port: port || 5432,
+    };
     this.tablename = tablename;
     this.collection = new Collection();
+    this.db = new Pool(this.clientOptions, 20);
+  }
+
+  private async runQuery(query: string, ...args: any[]) {
+    const client: PoolClient = await this.db.connect();
+    const dbResult = await client.query(query, ...args);
+    client.release();
+    return dbResult;
   }
 
   /**
    * Initiate the database.
    * ```ts
-   * db.init();
+   * await db.init();
    * ```
    */
-  init() {
-    const all = [
-      ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
-    ];
+  async init() {
+    await this.runQuery(
+      `CREATE TABLE IF NOT EXISTS ${this.tablename}(key TEXT, value TEXT)`
+    );
+    const all = await (
+      await this.runQuery(`SELECT * FROM ${this.tablename}`)
+    ).rowsOfObjects();
     for (const row of all) {
       this.collection.set(row.key, row.value);
     }
@@ -65,31 +79,34 @@ export class SqliteProvider {
       lodashedData = value;
     }
 
-    let fetchQuery = [
-      ...this.db
-        .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key])
-        .asObjects(),
-    ];
+    let fetchQuery = (
+      await this.runQuery(
+        `SELECT * FROM ${this.tablename} WHERE key = $1;`,
+        key
+      )
+    ).rows;
+
     if (fetchQuery.length <= 0) {
-      this.db.query(
-        `INSERT INTO ${this.tablename} (key, value) VALUES (?, ?)`,
-        [key, JSON.stringify(lodashedData)]
+      await this.runQuery(
+        `INSERT INTO ${this.tablename} (key, value) VALUES ($1, $2);`,
+        key,
+        JSON.stringify(lodashedData)
       );
-      fetchQuery = [
-        ...this.db
-          .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key])
-          .asObjects(),
-      ];
+      fetchQuery = (
+        await this.runQuery(
+          `SELECT * FROM ${this.tablename} WHERE key = $1`,
+          key
+        )
+      ).rowsOfObjects();
     }
-    this.db.query(`UPDATE ${this.tablename} SET value = ? WHERE key = ?`, [
+    await this.runQuery(
+      `UPDATE ${this.tablename} SET value = $1 WHERE key = $2`,
       JSON.stringify(lodashedData),
-      key,
-    ]);
-    return [
-      ...this.db
-        .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key])
-        .asObjects(),
-    ][0];
+      key
+    );
+    return (
+      await this.runQuery(`SELECT * FROM ${this.tablename} WHERE key = $1`, key)
+    ).rowsOfObjects()[0];
   }
 
   /**
@@ -148,11 +165,14 @@ export class SqliteProvider {
    */
   async push(key: string, ...value: any[]) {
     let fetched = await this.get(key);
+    console.log(`fetched: ${fetched}`);
+    console.log(`value: ${value}`);
     for (let v in value) {
       v = value[v];
       if (!fetched) {
         let array = [];
         array.push(v);
+        console.log(array);
         await this.set(key, array);
       } else {
         if (!Array.isArray(fetched)) {
@@ -178,9 +198,10 @@ export class SqliteProvider {
    * ```
    */
   async all() {
-    let fetched = [
-      ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
-    ];
+    let fetched = (
+      await this.db.query(`SELECT * FROM ${this.tablename}`)
+    ).rowsOfObjects();
+
     let data = new Map();
     for (const o of fetched) {
       let value = JSON.parse(o.value);
