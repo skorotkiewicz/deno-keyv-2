@@ -1,5 +1,18 @@
 import { Pool, PoolClient, _, Collection } from "../deps.ts";
 
+
+/**
+ * Simple and easy to use key-v PostgreSQL provider for Deno.
+ * @param tablename The name of the table in the database
+ * @param user The name of the user of the database
+ * @param database The name of the database
+ * @param hostname The name of the host
+ * @param password The password to the user
+ * @param port The port on which the database is hosted
+ * ```ts
+ * const db = new DB("userinfo", "postgres", "denokeyv", "localhost", "somepassword");
+ * ```
+ */
 export class PostgresProvider {
   private db: Pool;
   private collection: Collection;
