@@ -29,12 +29,9 @@ export class SqliteProvider {
    * ```
    */
   init() {
-    const all = [
+    [
       ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
-    ];
-    for (const row of all) {
-      this.collection.set(row.key, row.value);
-    }
+    ].forEach(row => this.collection.set(row.key, row.value))
   }
 
   /**
@@ -47,18 +44,13 @@ export class SqliteProvider {
    * ```
    */
   async set(key: string, value: any) {
-    let unparsed;
-    if (key.includes(".")) {
-      let split = key.split(".");
-      key = split[0];
-      split.shift();
-      unparsed = split;
-    }
+    let unparsed = key.split(".");
+    key = `${unparsed.shift()}`
 
     let cachedData = this.collection.get(key) || {};
-    let lodashedData = _.set(cachedData, unparsed || key, value);
+    let lodashedData = _.set(cachedData, unparsed.length > 1 ? unparsed : key, value);
 
-    if (unparsed) {
+    if (unparsed.length > 1) {
       this.collection.set(key, lodashedData);
     } else {
       this.collection.set(key, value);
@@ -70,7 +62,7 @@ export class SqliteProvider {
         .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key])
         .asObjects(),
     ];
-    if (fetchQuery.length <= 0) {
+    if (fetchQuery.length < 0) {
       this.db.query(
         `INSERT INTO ${this.tablename} (key, value) VALUES (?, ?)`,
         [key, JSON.stringify(lodashedData)]
@@ -101,7 +93,7 @@ export class SqliteProvider {
    * const john = await db.get("john")
    * ```
    */
-  async get(key: string, defaultValue?: string) {
+  async get(key: string, defaultValue: string = "") {
     let data;
     let collection;
 
@@ -112,13 +104,13 @@ export class SqliteProvider {
       array.shift();
       let prop = array.join(".");
       if (!exists) {
-        await this.set(key, defaultValue || "");
+        await this.set(key, defaultValue);
       }
       data = _.get(collection, prop, null);
     } else {
       let exists = this.collection.has(key);
       if (!exists) {
-        await this.set(key, defaultValue || "");
+        await this.set(key, defaultValue);
       }
       data = this.collection.get(key);
     }
@@ -129,12 +121,8 @@ export class SqliteProvider {
   /**
    * Alias to the `.get` method.
    */
-  async fetch(key: string, defaultValue?: string) {
-    if (defaultValue) {
-      await this.get(key, defaultValue);
-      return;
-    }
-    await this.get(key);
+  async fetch(key: string, defaultValue: string = "") {
+    await this.get(key, defaultValue);
   }
 
   /**
@@ -182,10 +170,7 @@ export class SqliteProvider {
       ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
     ];
     let data = new Map();
-    for (const o of fetched) {
-      let value = JSON.parse(o.value);
-      data.set(o.key, value);
-    }
+    for (const o of fetched) data.set(o.key, JSON.parse(o.value));
     return Object.fromEntries(data);
   }
 
@@ -200,9 +185,7 @@ export class SqliteProvider {
   async has(key: string) {
     if (key.includes(".")) {
       let split = key.split(".");
-      let first = split[0];
-      let collection = await this.get(first);
-      split.shift();
+      let collection = await this.get(`${split.shift()}`);
       let prop = split.join(".");
       return _.has(collection, prop);
     }
