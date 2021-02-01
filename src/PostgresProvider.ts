@@ -1,6 +1,5 @@
 import { Pool, PoolClient, _, Collection } from "../deps.ts";
 
-
 /**
  * Simple and easy to use key-v PostgreSQL provider for Deno.
  * @param tablename The name of the table in the database
@@ -41,7 +40,7 @@ export class PostgresProvider {
 
   private async runQuery(query: string, ...args: any[]) {
     const client: PoolClient = await this.db.connect();
-    const dbResult = await client.query(query, ...args);
+    const dbResult = await client.queryObject(query, ...args);
     client.release();
     return dbResult;
   }
@@ -56,9 +55,7 @@ export class PostgresProvider {
     await this.runQuery(
       `CREATE TABLE IF NOT EXISTS ${this.tablename}(key TEXT, value TEXT)`
     );
-    const all = await (
-      await this.runQuery(`SELECT * FROM ${this.tablename}`)
-    ).rowsOfObjects();
+    const all = await this.runQuery(`SELECT * FROM ${this.tablename}`);
     for (const row of all) {
       this.collection.set(row.key, row.value);
     }
@@ -105,12 +102,10 @@ export class PostgresProvider {
         key,
         JSON.stringify(lodashedData)
       );
-      fetchQuery = (
-        await this.runQuery(
-          `SELECT * FROM ${this.tablename} WHERE key = $1`,
-          key
-        )
-      ).rowsOfObjects();
+      fetchQuery = await this.runQuery(
+        `SELECT * FROM ${this.tablename} WHERE key = $1`,
+        key
+      );
     }
     await this.runQuery(
       `UPDATE ${this.tablename} SET value = $1 WHERE key = $2`,
@@ -119,7 +114,7 @@ export class PostgresProvider {
     );
     return (
       await this.runQuery(`SELECT * FROM ${this.tablename} WHERE key = $1`, key)
-    ).rowsOfObjects()[0];
+    )[0];
   }
 
   /**
@@ -211,9 +206,7 @@ export class PostgresProvider {
    * ```
    */
   async all() {
-    let fetched = (
-      await this.db.query(`SELECT * FROM ${this.tablename}`)
-    ).rowsOfObjects();
+    let fetched = await this.runQuery(`SELECT * FROM ${this.tablename}`);
 
     let data = new Map();
     for (const o of fetched) {
