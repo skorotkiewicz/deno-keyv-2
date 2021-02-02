@@ -1,4 +1,5 @@
-import { Pool, PoolClient, _, Collection } from "../deps.ts";
+import { Pool, PoolClient, _, Collection, QueryObjectResult } from "../deps.ts";
+
 
 /**
  * Simple and easy to use key-v PostgreSQL provider for Deno.
@@ -40,9 +41,9 @@ export class PostgresProvider {
 
   private async runQuery(query: string, ...args: any[]) {
     const client: PoolClient = await this.db.connect();
-    const dbResult = await client.queryObject(query, ...args);
+    const dbResult: QueryObjectResult<Record<string, string>> = await client.queryObject(query, ...args);
     client.release();
-    return dbResult;
+    return dbResult.rows;
   }
 
   /**
@@ -55,7 +56,9 @@ export class PostgresProvider {
     await this.runQuery(
       `CREATE TABLE IF NOT EXISTS ${this.tablename}(key TEXT, value TEXT)`
     );
-    const all = await this.runQuery(`SELECT * FROM ${this.tablename}`);
+    const all = await this.runQuery(
+      `SELECT * FROM ${this.tablename}`
+    );
     for (const row of all) {
       this.collection.set(row.key, row.value);
     }
@@ -94,7 +97,7 @@ export class PostgresProvider {
         `SELECT * FROM ${this.tablename} WHERE key = $1;`,
         key
       )
-    ).rows;
+    );
 
     if (fetchQuery.length <= 0) {
       await this.runQuery(
@@ -209,10 +212,10 @@ export class PostgresProvider {
     let fetched = await this.runQuery(`SELECT * FROM ${this.tablename}`);
 
     let data = new Map();
-    for (const o of fetched) {
-      let value = JSON.parse(o.value);
+    fetched.forEach(o => {
+      let value = JSON.parse(o["value"]);
       data.set(o.key, value);
-    }
+    })
     return Object.fromEntries(data);
   }
 

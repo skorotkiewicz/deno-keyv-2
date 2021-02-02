@@ -5,7 +5,7 @@ const pg = new PostgresProvider(
   "postgres",
   "denokeyv",
   "localhost",
-  "[Cencored because password]",
+  "[Cencored cuz why not]",
   5432
 );
 
