@@ -31,7 +31,7 @@ export class SqliteProvider {
   init() {
     [
       ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
-    ].forEach(row => this.collection.set(row.key, row.value))
+    ].forEach((row) => this.collection.set(row.key, row.value));
   }
 
   /**
@@ -45,10 +45,14 @@ export class SqliteProvider {
    */
   async set(key: string, value: any) {
     let unparsed = key.split(".");
-    key = `${unparsed.shift()}`
+    key = `${unparsed.shift()}`;
 
     let cachedData = this.collection.get(key) || {};
-    let lodashedData = _.set(cachedData, unparsed.length > 1 ? unparsed : key, value);
+    let lodashedData = _.set(
+      cachedData,
+      unparsed.length > 1 ? unparsed : key,
+      value
+    );
 
     if (unparsed.length > 1) {
       this.collection.set(key, lodashedData);
@@ -93,7 +97,7 @@ export class SqliteProvider {
    * const john = await db.get("john")
    * ```
    */
-  async get(key: string, defaultValue: string = "") {
+  async get(key: string, defaultValue: any = "") {
     let data;
     let collection;
 
@@ -121,7 +125,7 @@ export class SqliteProvider {
   /**
    * Alias to the `.get` method.
    */
-  async fetch(key: string, defaultValue: string = "") {
+  async fetch(key: string, defaultValue: any = "") {
     await this.get(key, defaultValue);
   }
 
