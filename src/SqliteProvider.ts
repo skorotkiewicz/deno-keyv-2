@@ -10,7 +10,7 @@ import { Collection, DB, _ } from "../deps.ts";
  */
 export class SqliteProvider {
   private db: DB;
-  private collection: Collection;
+  collection: Collection;
   private tablename: string;
 
   constructor(databaseFilePath: string, tablename: string) {
