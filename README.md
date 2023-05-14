@@ -91,5 +91,5 @@ Pull Requests are always welcome. Just make sure to open a issue and inform us w
 
 ---
 
-Made with ❤ by [Tejas Agarwal](https://github.com/tejasag)
-MIT License. Copyright 2021 All rights reserved.
+Made with ❤ by [Tejas Agarwal](https://github.com/tejasag) and [skorotkiewicz](https://github.com/skorotkiewicz)
+MIT License. Copyright 2021-2023 All rights reserved.
