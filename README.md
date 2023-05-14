@@ -79,10 +79,7 @@ If you need help regarding the wrapper, feel free to open a [issue](https://gith
 
 ## Contributing
 
-Pull Requests are always welcome. Just make sure to open a issue and inform us what you are working so that we can confirm if we want it in the repository or not.
-
-<!-- - We use [deno fmt](https://deno.land/manual/tools/formatter) for formatting our files. We recommend you use it too if you wish to contribute.
-- Please do not add any more third party modules to the library without confirming with us first. -->
+Pull Requests are always welcome! :-)
 
 ---
 
