@@ -19,8 +19,8 @@ Keyv is a simple and lightweight, easy to use database wrapper made for the Java
 // ================USE THE FOLLOWING FOR SQLITE=======================
 import { SqliteProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
 
-// Need to make a new file called `db.sqlite` in your folder.
-// The second value is the name of the database.. You can name is anything you want
+// This make a new file called `db.sqlite` in your folder.
+// The second value is the name of the database. You can name is anything you want :)
 const db = new SqliteProvider("db.sqlite", "userinfo");
 
 // ================USE THE FOLLOWING FOR PostgreSQL=======================
@@ -73,16 +73,16 @@ console.log(await pg.all());
 
 ## Support
 
-If you need help regarding the wrapper, feel free to open a [issue](https://github.com/skorotkiewicz/deno-keyv/issues).
+If you need help regarding the wrapper, feel free to open a [issue](https://github.com/skorotkiewicz/deno-keyv-2/issues).
 
 ## Contributing
 
 Pull Requests are always welcome. Just make sure to open a issue and inform us what you are working so that we can confirm if we want it in the repository or not.
 
-- We use [deno fmt](https://deno.land/manual/tools/formatter) for formatting our files. We recommend you use it too if you wish to contribute.
-- Please do not add any more third party modules to the library without confirming with us first.
+<!-- - We use [deno fmt](https://deno.land/manual/tools/formatter) for formatting our files. We recommend you use it too if you wish to contribute.
+- Please do not add any more third party modules to the library without confirming with us first. -->
 
 ---
 
-Made with ❤ by [Tejas Agarwal](https://github.com/tejasag) and [skorotkiewicz](https://github.com/skorotkiewicz)
-MIT License. Copyright 2021-2023 All rights reserved.
+Made with ❤ by [Tejas Agarwal](https://github.com/tejasag) and [Sebastian Korotkiewicz](https://github.com/skorotkiewicz)  
+MIT License
