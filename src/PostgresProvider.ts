@@ -1,5 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import { Pool, PoolClient } from "../deps.ts";
+import { Pool } from "https://deno.land/x/postgres@v0.17.0/mod.ts";
+import { PoolClient } from "https://deno.land/x/postgres@v0.17.0/client.ts";
 
 /** Simple and easy to use key-v PostgreSQL provider for Deno.
  * @param tablename The name of the table in the database

@@ -1,20 +1,18 @@
 import { SqliteProvider } from "../mod.ts";
 
-// Need to make a new file called `db.sqlite` in your folder.
-// The second value is the name of the database.. You can name is anything you want
-const db = new SqliteProvider("db.sqlite", "userinfo");
+const db = new SqliteProvider("db.sqlite", "tablename");
 
 // Set an object in the database.
 //            Key           Value
-await db.set("user", { name: "Alex" });
+db.set("user", { name: "Alex" });
 // Data -> 'user': { 'name': 'Alex' }
 
 const gender = "Male";
 
-await db.set("user.gender", gender);
+db.set("user.gender", gender);
 // Data -> 'user': { 'name': 'Alex', 'gender': 'male' }
 
-await db.set("user.age", 33);
+db.set("user.age", 33);
 // Data -> 'user': { 'name': 'Alex', 'gender': 'male', 'age': 33}
 
 const age = await db.get("user.age");
@@ -25,7 +23,7 @@ await db.push("user.children", "Suzy");
 await db.push("user.name", "Johnson");
 
 const all = await db.all();
-console.log(all);
+console.log("all:", all);
 
 console.log(await db.has("user.hehe"));
 console.log(await db.has("user.name"));

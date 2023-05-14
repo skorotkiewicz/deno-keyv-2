@@ -1,11 +1,12 @@
-import { DB } from "../deps.ts";
+// deno-lint-ignore-file no-explicit-any
+import { DB } from "https://deno.land/x/sqlite@v3.7.2/mod.ts";
 
 /**
  * Simple and easy to use key-v Sqlite Provider for deno
  * @param databaseFilePath The filepath for the `.sqlite` file.
  * @param tablename The name of the table for storing data.
  * ```ts
- * const db = new DB("./database.sqlite", "userinfo")
+ * const db = new DB("./database.sqlite", "tablename")
  * ```
  */
 export class SqliteProvider {
@@ -30,15 +31,15 @@ export class SqliteProvider {
    * await db.set("john.gender", "male");
    * ```
    */
-  async set(key: string, value: any) {
-    let unparsed;
+  set(key: string, value: any) {
+    let unparsed: any;
     if (key.includes(".")) {
-      let split = key.split(".");
+      const split = key.split(".");
       key = split[0];
       split.shift();
       unparsed = split;
     }
-    let cachedData = this.collection.get(key) || {};
+    const cachedData = this.collection.get(key) || {};
     let data = Object.assign(cachedData, { [unparsed || key]: value });
 
     if (unparsed) {
@@ -87,23 +88,23 @@ export class SqliteProvider {
    * const john = await db.get("john")
    * ```
    */
-  async get(key: string, defaultValue?: string) {
+  get(key: string, defaultValue?: string) {
     let data;
     let collection;
     if (key.includes(".")) {
-      let array = key.split(".");
+      const array = key.split(".");
       collection = this.collection.get(array[0]);
-      let exists = this.collection.has(array[0]);
+      const exists = this.collection.has(array[0]);
       array.shift();
-      let prop = array.join(".");
+      const prop = array.join(".");
       if (!exists) {
-        await this.set(key, defaultValue || "");
+        this.set(key, defaultValue || "");
       }
       data = collection[prop] != null ? collection[prop] : null;
     } else {
-      let exists = this.collection.has(key);
+      const exists = this.collection.has(key);
       if (!exists) {
-        await this.set(key, defaultValue || "");
+        this.set(key, defaultValue || "");
       }
       data = this.collection.get(key);
     }
@@ -131,22 +132,22 @@ export class SqliteProvider {
    * ```
    */
   async push(key: string, ...value: any[]) {
-    let fetched = await this.get(key);
+    const fetched = await this.get(key);
     for (let v in value) {
       v = value[v];
       if (!fetched) {
-        let array = [];
+        const array = [];
         array.push(v);
-        await this.set(key, array);
+        this.set(key, array);
       } else {
         if (!Array.isArray(fetched)) {
-          let array = [];
+          const array = [];
           array.push(fetched);
           array.push(v);
-          await this.set(key, array);
+          this.set(key, array);
         } else {
           fetched.push(v);
-          await this.set(key, fetched);
+          this.set(key, fetched);
         }
       }
     }
@@ -160,18 +161,18 @@ export class SqliteProvider {
    * const all = await db.all();
    * ```
    */
-  async all() {
-    let fetched = [...this.db.query(`SELECT * FROM ${this.tablename}`)];
+  all() {
+    const fetched = [...this.db.query(`SELECT * FROM ${this.tablename}`)];
     // let fetched = [
     //   ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
     // ];
 
-    let data = new Map();
-    for (const o of fetched) {
+    const data = new Map();
+    for (const _o of fetched) {
       // let value = JSON.parse(o.value);
       // data.set(o.key, value);
       // TODO
-      console.log(">>>", o[0].value);
+      // console.log(">>>", o[0].value);
     }
     return Object.fromEntries(data);
   }
@@ -186,11 +187,11 @@ export class SqliteProvider {
    */
   async has(key: string) {
     if (key.includes(".")) {
-      let split = key.split(".");
-      let first = split[0];
-      let collection = await this.get(first);
+      const split = key.split(".");
+      const first = split[0];
+      const collection = await this.get(first);
       split.shift();
-      let prop = split.join(".");
+      const prop = split.join(".");
 
       return Object.prototype.hasOwnProperty.call(collection, prop);
     }
