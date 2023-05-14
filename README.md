@@ -31,7 +31,7 @@ const db = new DB("db.sqlite", "userinfo");
 db.init();
 
 // ================USE THE FOLLOWING FOR PostgreSQL=======================
-import { PostgresProvider } from "https://deno.land/x/keyv/mod.ts";
+import { PostgresProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
 
 const db = new PostgresProvider(
   "tablename",
