@@ -1,4 +1,4 @@
-import { Collection, DB, _ } from "../deps.ts";
+import { Collection, DB } from "../deps.ts";
 
 /**
  * Simple and easy to use key-v Sqlite Provider for deno
@@ -10,9 +10,8 @@ import { Collection, DB, _ } from "../deps.ts";
  */
 export class SqliteProvider {
   private db: DB;
-  collection: Collection;
+  private collection: Collection;
   private tablename: string;
-
   constructor(databaseFilePath: string, tablename: string) {
     this.db = new DB(databaseFilePath);
     this.db.query(
@@ -29,9 +28,12 @@ export class SqliteProvider {
    * ```
    */
   init() {
-    [
+    const all = [
       ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
-    ].forEach((row) => this.collection.set(row.key, row.value));
+    ];
+    for (const row of all) {
+      this.collection.set(row.key, row.value);
+    }
   }
 
   /**
@@ -44,32 +46,32 @@ export class SqliteProvider {
    * ```
    */
   async set(key: string, value: any) {
-    let unparsed = key.split(".");
-    key = `${unparsed.shift()}`;
-
+    let unparsed;
+    if (key.includes(".")) {
+      let split = key.split(".");
+      key = split[0];
+      split.shift();
+      unparsed = split;
+    }
     let cachedData = this.collection.get(key) || {};
-    let lodashedData = _.set(
-      cachedData,
-      unparsed.length > 1 ? unparsed : key,
-      value
-    );
+    // let lodashedData = _.set(cachedData, unparsed || key, value);
+    let data = Object.assign(cachedData, { [unparsed || key]: value });
 
-    if (unparsed.length > 1) {
-      this.collection.set(key, lodashedData);
+    if (unparsed) {
+      this.collection.set(key, data);
     } else {
       this.collection.set(key, value);
-      lodashedData = value;
+      data = value;
     }
-
     let fetchQuery = [
       ...this.db
         .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key])
         .asObjects(),
     ];
-    if (fetchQuery.length < 0) {
+    if (fetchQuery.length <= 0) {
       this.db.query(
         `INSERT INTO ${this.tablename} (key, value) VALUES (?, ?)`,
-        [key, JSON.stringify(lodashedData)]
+        [key, JSON.stringify(data)]
       );
       fetchQuery = [
         ...this.db
@@ -78,7 +80,7 @@ export class SqliteProvider {
       ];
     }
     this.db.query(`UPDATE ${this.tablename} SET value = ? WHERE key = ?`, [
-      JSON.stringify(lodashedData),
+      JSON.stringify(data),
       key,
     ]);
     return [
@@ -97,10 +99,9 @@ export class SqliteProvider {
    * const john = await db.get("john")
    * ```
    */
-  async get(key: string, defaultValue: any = "") {
+  async get(key: string, defaultValue?: string) {
     let data;
     let collection;
-
     if (key.includes(".")) {
       let array = key.split(".");
       collection = this.collection.get(array[0]);
@@ -108,25 +109,29 @@ export class SqliteProvider {
       array.shift();
       let prop = array.join(".");
       if (!exists) {
-        await this.set(key, defaultValue);
+        await this.set(key, defaultValue || "");
       }
-      data = _.get(collection, prop, null);
+      //   data = _.get(collection, prop, null);
+      data = collection[prop] != null ? collection[prop] : null;
     } else {
       let exists = this.collection.has(key);
       if (!exists) {
-        await this.set(key, defaultValue);
+        await this.set(key, defaultValue || "");
       }
       data = this.collection.get(key);
     }
-
     return data;
   }
 
   /**
    * Alias to the `.get` method.
    */
-  async fetch(key: string, defaultValue: any = "") {
-    await this.get(key, defaultValue);
+  async fetch(key: string, defaultValue?: string) {
+    if (defaultValue) {
+      await this.get(key, defaultValue);
+      return;
+    }
+    await this.get(key);
   }
 
   /**
@@ -158,7 +163,6 @@ export class SqliteProvider {
         }
       }
     }
-
     return await this.get(key);
   }
 
@@ -174,7 +178,10 @@ export class SqliteProvider {
       ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
     ];
     let data = new Map();
-    for (const o of fetched) data.set(o.key, JSON.parse(o.value));
+    for (const o of fetched) {
+      let value = JSON.parse(o.value);
+      data.set(o.key, value);
+    }
     return Object.fromEntries(data);
   }
 
@@ -189,9 +196,12 @@ export class SqliteProvider {
   async has(key: string) {
     if (key.includes(".")) {
       let split = key.split(".");
-      let collection = await this.get(`${split.shift()}`);
+      let first = split[0];
+      let collection = await this.get(first);
+      split.shift();
       let prop = split.join(".");
-      return _.has(collection, prop);
+      //   return _.has(collection, prop);
+      return Object.prototype.hasOwnProperty.call(collection, prop);
     }
     return this.collection.has(key);
   }

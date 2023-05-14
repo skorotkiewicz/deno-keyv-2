@@ -1,11 +1,11 @@
-import {PostgresProvider} from "../src/PostgresProvider.ts";
+import { PostgresProvider } from "../src/PostgresProvider.ts";
 
 const pg = new PostgresProvider(
-  "info",
+  "tablename",
   "postgres",
   "denokeyv",
   "localhost",
-  "[Cencored cuz why not]",
+  "password",
   5432
 );
 
@@ -15,9 +15,6 @@ await pg.set("info.age", 33);
 
 console.log(await pg.get("info"));
 console.log(await pg.get("info.name"));
-
-await pg.push("info.children", "Suzy");
-await pg.push("info.children", "James", "Charles");
 
 console.log(await pg.all());
 

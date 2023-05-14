@@ -1,6 +1,6 @@
-<img align="right" src="https://media.discordapp.net/attachments/770613980632449032/790552609617477642/banner.png?width=572&height=559" height="300" />
+<img align="right" src="banner.png" height="300" />
 
-# Deno Keyv
+# Deno-Keyv-2
 
 Keyv is a simple and lightweight, easy to use database wrapper made for the Javascript runtime envoirement, [Deno](https://deno.land/). The wrapper is designed for quick setup and fast results.
 
@@ -16,7 +16,6 @@ Keyv is a simple and lightweight, easy to use database wrapper made for the Java
 ## Usage
 
 - [Stable](https://deno.land/x/keyv) `import { DB } from "https://deno.land/x/mod.ts";`
-- [Main](https://github.com/OwOland/deno-keyv) `import { DB } from "https://raw.githubusercontent.com/OwOland/deno-keyv/main/mod.ts";` **Main may contain bugs**
 
 ## Examples
 
@@ -32,12 +31,16 @@ const db = new DB("db.sqlite", "userinfo");
 db.init();
 
 // ================USE THE FOLLOWING FOR PostgreSQL=======================
-import {PostgresProvider} from "https://deno.land/x/keyv/mod.ts";
+import { PostgresProvider } from "https://deno.land/x/keyv/mod.ts";
 
-const db = new PostgresProvider("userinfo", "username", "database", "hostname", "password");
+const db = new PostgresProvider(
+  "tablename",
+  "username",
+  "database",
+  "hostname",
+  "password"
+);
 await db.init();
-
-
 
 // Set an object in the database.
 //            Key           Value
@@ -50,23 +53,34 @@ await db.set("user.gender", "male");
 await db.set("user.age", 33);
 // Data -> 'user': { 'name': 'Alex', 'gender': 'male', 'age': 33}
 
+await pg.set("user.children", ["Klaudia", "Ada"]);
+// Data -> 'user': {"name":"Alex","gender":"male","age":33,"children":["Klaudia","Ada"]}
+
+// Remove value from key
+await db.set("user.name", null);
+// Output -> { 'gender': 'male', 'age': 33}
+
 // Getting the data from the database
-const data = await db.get("user");
-console.log(data);
+await db.get("user");
 // Output -> { 'name': 'Alex', 'gender': 'male', 'age': 33}
 
-const age = await db.get("user.age");
-console.log(age);
+await db.get("user.age");
 // Output -> 33
+
+// Remove `user` key
+await db.delete("user");
+// Output -> `null`
+
+console.log(await pg.all());
+// Data -> {
+//   user: { name: "Alex" },
+//   info: { name: "Alex", gender: "male", age: 33, children: [ "Klaudia", "Ada" ] }
+// }
 ```
-
-## Docs
-
-[View Documentation Here](https://keyv.mod.land)
 
 ## Support
 
-If you need help regarding the wrapper, feel free to open a [issue](https://github.com/OwOland/deno-keyv/issues) or ask in the [Help discussions category](https://github.com/OwOland/deno-keyv/discussions/categories/help) on github. You can also DM me on discord `Tejas#9134`.
+If you need help regarding the wrapper, feel free to open a [issue](https://github.com/skorotkiewicz/deno-keyv/issues).
 
 ## Contributing
 
@@ -77,5 +91,5 @@ Pull Requests are always welcome. Just make sure to open a issue and inform us w
 
 ---
 
-Made with ❤ by [Tejas Agarwal](https://github.com/tejasag) 
+Made with ❤ by [Tejas Agarwal](https://github.com/tejasag)
 MIT License. Copyright 2021 All rights reserved.

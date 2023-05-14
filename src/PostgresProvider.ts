@@ -1,8 +1,6 @@
-import { Pool, PoolClient, _, Collection, QueryObjectResult } from "../deps.ts";
+import { Pool, PoolClient, Collection } from "../deps.ts";
 
-
-/**
- * Simple and easy to use key-v PostgreSQL provider for Deno.
+/** Simple and easy to use key-v PostgreSQL provider for Deno.
  * @param tablename The name of the table in the database
  * @param user The name of the user of the database
  * @param database The name of the database
@@ -18,7 +16,6 @@ export class PostgresProvider {
   private collection: Collection;
   private tablename: String;
   private clientOptions: Object;
-
   constructor(
     tablename: String,
     user: String,
@@ -40,10 +37,16 @@ export class PostgresProvider {
   }
 
   private async runQuery(query: string, ...args: any[]) {
-    const client: PoolClient = await this.db.connect();
-    const dbResult: QueryObjectResult<Record<string, string>> = await client.queryObject(query, ...args);
-    client.release();
-    return dbResult.rows;
+    try {
+      const client: PoolClient = await this.db.connect();
+      const result = await client.queryArray(query, ...args);
+
+      client.release();
+      return result;
+    } catch (err) {
+      console.error(`Error running query: ${err.message}`);
+      throw err;
+    }
   }
 
   /**
@@ -54,14 +57,8 @@ export class PostgresProvider {
    */
   async init() {
     await this.runQuery(
-      `CREATE TABLE IF NOT EXISTS ${this.tablename}(key TEXT, value TEXT)`
+      `CREATE TABLE IF NOT EXISTS ${this.tablename}(key TEXT PRIMARY KEY, value TEXT)`
     );
-    const all = await this.runQuery(
-      `SELECT * FROM ${this.tablename}`
-    );
-    for (const row of all) {
-      this.collection.set(row.key, row.value);
-    }
   }
 
   /**
@@ -75,6 +72,7 @@ export class PostgresProvider {
    */
   async set(key: string, value: any) {
     let unparsed;
+
     if (key.includes(".")) {
       let split = key.split(".");
       key = split[0];
@@ -83,41 +81,49 @@ export class PostgresProvider {
     }
 
     let cachedData = this.collection.get(key) || {};
-    let lodashedData = _.set(cachedData, unparsed || key, value);
+    let data = Object.assign(cachedData, { [unparsed || key]: value });
+
+    const result = await this.runQuery(
+      `SELECT value FROM ${this.tablename} WHERE key = $1`,
+      [key]
+    );
+
+    if (result.rowCount > 0) {
+      const existingData = JSON.parse(result.rows[0][0]);
+      data = Object.assign(existingData, data);
+    }
 
     if (unparsed) {
-      this.collection.set(key, lodashedData);
+      this.collection.set(key, data);
     } else {
       this.collection.set(key, value);
-      lodashedData = value;
+      data = value;
     }
 
-    let fetchQuery = (
-      await this.runQuery(
-        `SELECT * FROM ${this.tablename} WHERE key = $1;`,
-        key
-      )
-    );
-
-    if (fetchQuery.length <= 0) {
-      await this.runQuery(
-        `INSERT INTO ${this.tablename} (key, value) VALUES ($1, $2);`,
-        key,
-        JSON.stringify(lodashedData)
-      );
-      fetchQuery = await this.runQuery(
-        `SELECT * FROM ${this.tablename} WHERE key = $1`,
-        key
-      );
+    if (value === null) {
+      delete this.collection[unparsed];
+      delete data[unparsed];
     }
+
     await this.runQuery(
-      `UPDATE ${this.tablename} SET value = $1 WHERE key = $2`,
-      JSON.stringify(lodashedData),
-      key
+      `INSERT INTO ${this.tablename} (key, value) VALUES ($1, $2)
+       ON CONFLICT (key) DO UPDATE SET value = $2`,
+      [key, JSON.stringify(data)]
     );
-    return (
-      await this.runQuery(`SELECT * FROM ${this.tablename} WHERE key = $1`, key)
-    )[0];
+
+    const json = JSON.stringify(Object.fromEntries(this.collection));
+    return json;
+  }
+
+  /**
+   * Remove key from the database
+   * @param key The value to remove key
+   * @returns null
+   */
+  async delete(key: string) {
+    this.collection.delete(key);
+    await this.runQuery(`DELETE FROM ${this.tablename} WHERE key = $1`, [key]);
+    return null;
   }
 
   /**
@@ -137,68 +143,38 @@ export class PostgresProvider {
       let array = key.split(".");
       collection = this.collection.get(array[0]);
       let exists = this.collection.has(array[0]);
-      array.shift();
       let prop = array.join(".");
+
       if (!exists) {
-        await this.set(key, defaultValue || "");
+        const result = await this.runQuery(
+          `SELECT value FROM ${this.tablename} WHERE key = $1`,
+          [array[0]]
+        );
+        if (result.rowCount > 0) {
+          data = JSON.parse(result.rows[0][0])[array[1]];
+        } else {
+          data = defaultValue || "";
+        }
+      } else {
+        data = collection[prop];
       }
-      data = _.get(collection, prop, null);
     } else {
       let exists = this.collection.has(key);
       if (!exists) {
-        await this.set(key, defaultValue || "");
-      }
-      data = this.collection.get(key);
-    }
-
-    return data;
-  }
-
-  /**
-   * Alias to the `.get` method.
-   */
-  async fetch(key: string, defaultValue?: string) {
-    if (defaultValue) {
-      await this.get(key, defaultValue);
-      return;
-    }
-    await this.get(key);
-  }
-
-  /**
-   * Push a item to a array. If the array does not exist, then it will make a new array!
-   * @param key The key to the array in the database.
-   * @param value The value to add in the array.
-   * @returns The updated value of the key
-   * ```ts
-   * await db.push("john.children", "Suzy");
-   * ```
-   */
-  async push(key: string, ...value: any[]) {
-    let fetched = await this.get(key);
-    console.log(`fetched: ${fetched}`);
-    console.log(`value: ${value}`);
-    for (let v in value) {
-      v = value[v];
-      if (!fetched) {
-        let array = [];
-        array.push(v);
-        console.log(array);
-        await this.set(key, array);
-      } else {
-        if (!Array.isArray(fetched)) {
-          let array = [];
-          array.push(fetched);
-          array.push(v);
-          await this.set(key, array);
+        const result = await this.runQuery(
+          `SELECT value FROM ${this.tablename} WHERE key = $1`,
+          [key]
+        );
+        if (result.rowCount > 0) {
+          data = JSON.parse(result.rows[0][0]);
         } else {
-          fetched.push(v);
-          await this.set(key, fetched);
+          data = defaultValue || "";
         }
+      } else {
+        data = this.collection.get(key);
       }
     }
-
-    return await this.get(key);
+    return data;
   }
 
   /**
@@ -209,13 +185,12 @@ export class PostgresProvider {
    * ```
    */
   async all() {
-    let fetched = await this.runQuery(`SELECT * FROM ${this.tablename}`);
+    const result = await this.runQuery(`SELECT * FROM ${this.tablename}`);
 
     let data = new Map();
-    fetched.forEach(o => {
-      let value = JSON.parse(o["value"]);
-      data.set(o.key, value);
-    })
+    for (const o of result.rows) {
+      data.set(o[0], JSON.parse(o[1]));
+    }
     return Object.fromEntries(data);
   }
 
@@ -234,7 +209,7 @@ export class PostgresProvider {
       let collection = await this.get(first);
       split.shift();
       let prop = split.join(".");
-      return _.has(collection, prop);
+      return Object.prototype.hasOwnProperty.call(collection, prop);
     }
     return this.collection.has(key);
   }

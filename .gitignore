@@ -1,1 +1,2 @@
-**/.vscode/**
+.vscode
+test/postgres_local.ts
