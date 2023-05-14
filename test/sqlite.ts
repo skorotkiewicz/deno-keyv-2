@@ -4,9 +4,6 @@ import { DB } from "../mod.ts";
 // The second value is the name of the database.. You can name is anything you want
 const db = new DB("db.sqlite", "userinfo");
 
-// Important line to write before doing any operations!
-await db.init();
-
 // Set an object in the database.
 //            Key           Value
 await db.set("user", { name: "Alex" });
