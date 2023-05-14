@@ -13,15 +13,11 @@ Keyv is a simple and lightweight, easy to use database wrapper made for the Java
 - Supports dot notation.
   _And much more!_
 
-## Usage
-
-- [Stable](https://deno.land/x/keyv) `import { DB } from "https://deno.land/x/mod.ts";`
-
 ## Examples
 
 ```typescript
 // ================USE THE FOLLOWING FOR SQLITE=======================
-import { DB } from "https://deno.land/x/keyv/mod.ts";
+import { DB } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
 
 // Need to make a new file called `db.sqlite` in your folder.
 // The second value is the name of the database.. You can name is anything you want
