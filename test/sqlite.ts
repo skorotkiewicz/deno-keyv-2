@@ -1,8 +1,8 @@
-import { DB } from "../mod.ts";
+import { SqliteProvider } from "../mod.ts";
 
 // Need to make a new file called `db.sqlite` in your folder.
 // The second value is the name of the database.. You can name is anything you want
-const db = new DB("db.sqlite", "userinfo");
+const db = new SqliteProvider("db.sqlite", "userinfo");
 
 // Set an object in the database.
 //            Key           Value
