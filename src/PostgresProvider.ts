@@ -143,7 +143,7 @@ export class PostgresProvider {
       let array = key.split(".");
       collection = this.collection.get(array[0]);
       let exists = this.collection.has(array[0]);
-      let prop = array.join(".");
+      // let prop = array.join(".");
 
       if (!exists) {
         const result = await this.runQuery(
@@ -156,7 +156,7 @@ export class PostgresProvider {
           data = defaultValue || "";
         }
       } else {
-        data = collection[prop];
+        data = collection[array[1]];
       }
     } else {
       let exists = this.collection.has(key);
