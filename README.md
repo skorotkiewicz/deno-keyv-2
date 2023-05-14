@@ -21,7 +21,7 @@ import { SqliteProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-k
 
 // This make a new file called `db.sqlite` in your folder.
 // The second value is the name of the database. You can name is anything you want :)
-const db = new SqliteProvider("db.sqlite", "userinfo");
+const db = new SqliteProvider("db.sqlite", "tablename");
 
 // ================USE THE FOLLOWING FOR PostgreSQL=======================
 import { PostgresProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
