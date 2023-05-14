@@ -23,9 +23,6 @@ import { DB } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts
 // The second value is the name of the database.. You can name is anything you want
 const db = new DB("db.sqlite", "userinfo");
 
-// Important line to write before doing any operations!
-db.init();
-
 // ================USE THE FOLLOWING FOR PostgreSQL=======================
 import { PostgresProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
 
