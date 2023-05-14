@@ -1,4 +1,4 @@
-import { Collection, DB } from "../deps.ts";
+import { DB } from "../deps.ts";
 
 /**
  * Simple and easy to use key-v Sqlite Provider for deno
@@ -10,7 +10,7 @@ import { Collection, DB } from "../deps.ts";
  */
 export class SqliteProvider {
   private db: DB;
-  private collection: Collection;
+  private collection: Map<any, any>;
   private tablename: string;
   constructor(databaseFilePath: string, tablename: string) {
     this.db = new DB(databaseFilePath);
@@ -18,22 +18,7 @@ export class SqliteProvider {
       `CREATE TABLE IF NOT EXISTS ${tablename}(id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT, value TEXT)`
     );
     this.tablename = tablename;
-    this.collection = new Collection();
-  }
-
-  /**
-   * Initiate the database.
-   * ```ts
-   * db.init();
-   * ```
-   */
-  init() {
-    const all = [
-      ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
-    ];
-    for (const row of all) {
-      this.collection.set(row.key, row.value);
-    }
+    this.collection = new Map();
   }
 
   /**
@@ -54,7 +39,6 @@ export class SqliteProvider {
       unparsed = split;
     }
     let cachedData = this.collection.get(key) || {};
-    // let lodashedData = _.set(cachedData, unparsed || key, value);
     let data = Object.assign(cachedData, { [unparsed || key]: value });
 
     if (unparsed) {
@@ -63,30 +47,34 @@ export class SqliteProvider {
       this.collection.set(key, value);
       data = value;
     }
+
     let fetchQuery = [
-      ...this.db
-        .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key])
-        .asObjects(),
+      ...this.db.query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key]),
+      // .asObjects(),
     ];
+
     if (fetchQuery.length <= 0) {
       this.db.query(
         `INSERT INTO ${this.tablename} (key, value) VALUES (?, ?)`,
         [key, JSON.stringify(data)]
       );
+
       fetchQuery = [
-        ...this.db
-          .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key])
-          .asObjects(),
+        ...this.db.query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [
+          key,
+        ]),
+        // .asObjects(),
       ];
     }
+
     this.db.query(`UPDATE ${this.tablename} SET value = ? WHERE key = ?`, [
       JSON.stringify(data),
       key,
     ]);
+
     return [
-      ...this.db
-        .query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key])
-        .asObjects(),
+      ...this.db.query(`SELECT * FROM ${this.tablename} WHERE key = ?`, [key]),
+      // .asObjects(),
     ][0];
   }
 
@@ -111,7 +99,6 @@ export class SqliteProvider {
       if (!exists) {
         await this.set(key, defaultValue || "");
       }
-      //   data = _.get(collection, prop, null);
       data = collection[prop] != null ? collection[prop] : null;
     } else {
       let exists = this.collection.has(key);
@@ -174,13 +161,17 @@ export class SqliteProvider {
    * ```
    */
   async all() {
-    let fetched = [
-      ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
-    ];
+    let fetched = [...this.db.query(`SELECT * FROM ${this.tablename}`)];
+    // let fetched = [
+    //   ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
+    // ];
+
     let data = new Map();
     for (const o of fetched) {
-      let value = JSON.parse(o.value);
-      data.set(o.key, value);
+      // let value = JSON.parse(o.value);
+      // data.set(o.key, value);
+      // TODO
+      console.log(">>>", o[0].value);
     }
     return Object.fromEntries(data);
   }
@@ -200,7 +191,7 @@ export class SqliteProvider {
       let collection = await this.get(first);
       split.shift();
       let prop = split.join(".");
-      //   return _.has(collection, prop);
+
       return Object.prototype.hasOwnProperty.call(collection, prop);
     }
     return this.collection.has(key);
