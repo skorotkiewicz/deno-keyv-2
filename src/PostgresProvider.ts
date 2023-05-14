@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { Pool, PoolClient } from "../deps.ts";
 
 /** Simple and easy to use key-v PostgreSQL provider for Deno.
@@ -14,14 +15,14 @@ import { Pool, PoolClient } from "../deps.ts";
 export class PostgresProvider {
   private db: Pool;
   private collection: Map<any, any>;
-  private tablename: String;
-  private clientOptions: Object;
+  private tablename: string;
+  private clientOptions: Record<string, unknown>;
   constructor(
-    tablename: String,
-    user: String,
-    database: String,
-    hostname: String,
-    password: String,
+    tablename: string,
+    user: string,
+    database: string,
+    hostname: string,
+    password: string,
     port?: number
   ) {
     this.clientOptions = {
@@ -40,7 +41,6 @@ export class PostgresProvider {
     try {
       const client: PoolClient = await this.db.connect();
       const result = await client.queryArray(query, ...args);
-
       client.release();
       return result;
     } catch (err) {
@@ -70,17 +70,18 @@ export class PostgresProvider {
    * await db.set("john.gender", "male");
    * ```
    */
+  // value: string | number | (string | number)[] | null
   async set(key: string, value: any) {
-    let unparsed;
+    let unparsed: any;
 
     if (key.includes(".")) {
-      let split = key.split(".");
+      const split = key.split(".");
       key = split[0];
       split.shift();
       unparsed = split;
     }
 
-    let cachedData = this.collection.get(key) || {};
+    const cachedData = this.collection.get(key) || {};
     let data = Object.assign(cachedData, { [unparsed || key]: value });
 
     const result = await this.runQuery(
@@ -88,8 +89,8 @@ export class PostgresProvider {
       [key]
     );
 
-    if (result.rowCount > 0) {
-      const existingData = JSON.parse(result.rows[0][0]);
+    if (result.rowCount !== undefined && result.rowCount > 0) {
+      const existingData = JSON.parse(result.rows[0][0] as string);
       data = Object.assign(existingData, data);
     }
 
@@ -101,7 +102,7 @@ export class PostgresProvider {
     }
 
     if (value === null) {
-      delete this.collection[unparsed];
+      // delete this.collection[unparsed];
       delete data[unparsed];
     }
 
@@ -140,18 +141,17 @@ export class PostgresProvider {
     let collection;
 
     if (key.includes(".")) {
-      let array = key.split(".");
+      const array = key.split(".");
       collection = this.collection.get(array[0]);
-      let exists = this.collection.has(array[0]);
-      // let prop = array.join(".");
+      const exists = this.collection.has(array[0]);
 
       if (!exists) {
         const result = await this.runQuery(
           `SELECT value FROM ${this.tablename} WHERE key = $1`,
           [array[0]]
         );
-        if (result.rowCount > 0) {
-          data = JSON.parse(result.rows[0][0])[array[1]];
+        if (result.rowCount !== undefined && result.rowCount > 0) {
+          data = JSON.parse(result.rows[0][0] as string)[array[1]];
         } else {
           data = defaultValue || "";
         }
@@ -159,14 +159,14 @@ export class PostgresProvider {
         data = collection[array[1]];
       }
     } else {
-      let exists = this.collection.has(key);
+      const exists = this.collection.has(key);
       if (!exists) {
         const result = await this.runQuery(
           `SELECT value FROM ${this.tablename} WHERE key = $1`,
           [key]
         );
-        if (result.rowCount > 0) {
-          data = JSON.parse(result.rows[0][0]);
+        if (result.rowCount !== undefined && result.rowCount > 0) {
+          data = JSON.parse(result.rows[0][0] as string);
         } else {
           data = defaultValue || "";
         }
@@ -187,9 +187,9 @@ export class PostgresProvider {
   async all() {
     const result = await this.runQuery(`SELECT * FROM ${this.tablename}`);
 
-    let data = new Map();
+    const data = new Map();
     for (const o of result.rows) {
-      data.set(o[0], JSON.parse(o[1]));
+      data.set(o[0], JSON.parse(o[1] as string));
     }
     return Object.fromEntries(data);
   }
@@ -204,11 +204,11 @@ export class PostgresProvider {
    */
   async has(key: string) {
     if (key.includes(".")) {
-      let split = key.split(".");
-      let first = split[0];
-      let collection = await this.get(first);
+      const split = key.split(".");
+      const first = split[0];
+      const collection = await this.get(first);
       split.shift();
-      let prop = split.join(".");
+      const prop = split.join(".");
       return Object.prototype.hasOwnProperty.call(collection, prop);
     }
     return this.collection.has(key);
