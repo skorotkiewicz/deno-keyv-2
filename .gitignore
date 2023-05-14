@@ -1,2 +1,2 @@
-.vscode
 test/postgres_local.ts
+test/db.sqlite
