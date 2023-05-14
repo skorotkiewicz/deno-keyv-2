@@ -1,12 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="icon" href="https://via.placeholder.com/70x70" />
+    <link rel="stylesheet" href="./mvp.css" />
+
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
     <title>Deno-Keyv-2</title>
+
+    <style>
+      em {
+        color: #a2a2a2;
+      }
+    </style>
   </head>
+
   <body>
-    <h1>Deno-Keyv-2</h1>
+    <header>
+      <nav>
+        <a href="/">
+          <!-- <img
+            alt="Logo"
+            src="https://github.com/skorotkiewicz/deno-keyv-2/raw/main/banner.png"
+            height="70" /> -->
+          <img alt="Logo" src="min-logo.png" height="70" />
+        </a>
+        <ul>
+          <li>
+            <a href="https://github.com/skorotkiewicz/deno-keyv-2">GitHub</a>
+          </li>
+        </ul>
+      </nav>
+      <h1>Deno-Keyv-2</h1>
+      <h2>{key:value}</h2>
+      <p>
+        Keyv is a simple and lightweight, easy to use database wrapper made for
+        the Javascript runtime envoirement,
+        <a href="https://deno.land/">Deno</a>. The wrapper is designed for quick
+        setup and fast results.
+      </p>
+      <br />
+      <p>
+        <a href="#examples"><i>Examples</i></a>
+        <a href="https://github.com/skorotkiewicz/deno-keyv-2">
+          <b>GitHub &rarr;</b>
+        </a>
+        <!-- <a href="#"><b>Bold Link Button &rarr;</b></a> -->
+      </p>
+    </header>
+    <main>
+      <hr />
+      <section>
+        <header>
+          <h2>About</h2>
+        </header>
+        <aside>
+          <h3>Why Keyv?</h3>
+
+          <ul>
+            <li>Simple and easy to use</li>
+            <li>Very fast results</li>
+            <li>Data doesnt disappear after restarts</li>
+            <li>Beginner Friendly</li>
+            <li>Supports dot notation</li>
+            <li>
+              <mark> And much more! </mark>
+            </li>
+          </ul>
+        </aside>
+        <aside>
+          <h3>Support</h3>
+          <p>
+            If you need help regarding the wrapper, feel free to open a
+            <a href="https://github.com/skorotkiewicz/deno-keyv/issues">issue</a
+            >.
+          </p>
+          <!-- <p><small>*with small content</small></p> -->
+        </aside>
+        <aside>
+          <h3>Contributing</h3>
+          <p>
+            Pull Requests are always welcome. Just make sure to open a issue and
+            inform us what you are working so that we can confirm if we want it
+            in the repository or not.
+          </p>
+          <!-- <p>Card content <sup>with notification</sup></p> -->
+        </aside>
+      </section>
+
+      <hr />
+
+      <div>
+        <header>
+          <h2 id="examples">Example</h2>
+        </header>
+
+        <h3>SQLite</h3>
+        <pre>
+                <code>
+import { SqliteProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
+
+<em>// This make a new file called `db.sqlite` in your folder.
+// The second value is the name of the database. You can name is anything you want :)</em>
+
+const db = new SqliteProvider("db.sqlite", "userinfo");
+                </code>
+            </pre>
+
+        <h3>PostgreSQL</h3>
+        <pre>
+                <code>
+import { PostgresProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
+
+const db = new PostgresProvider(
+    "tablename",
+    "username",
+    "database",
+    "hostname",
+    "password"
+);
+await db.init();
+
+<em>// Set an object in the database.
+//            Key           Value</em>
+await db.set("user", { name: "Alex" });
+<em>// Data -> 'user': { 'name': 'Alex' }</em>
+
+await db.set("user.gender", "male");
+<em>// Data -> 'user': { 'name': 'Alex', 'gender': 'male' }</em>
+
+await db.set("user.age", 33);
+<em>// Data -> 'user': { 'name': 'Alex', 'gender': 'male', 'age': 33}</em>
+
+await pg.set("user.children", ["Klaudia", "Ada"]);
+<em>// Data -> 'user': {"name":"Alex","gender":"male","age":33,"children":["Klaudia","Ada"]}</em>
+
+<em>// Remove value from key</em>
+await db.set("user.name", null);
+<em>// Output -> { 'gender': 'male', 'age': 33}</em>
+
+<em>// Getting the data from the database</em>
+await db.get("user");
+<em>// Output -> { 'name': 'Alex', 'gender': 'male', 'age': 33}</em>
+
+await db.get("user.age");
+<em>// Output -> 33</em>
+
+<em>// Remove `user` key</em>
+await db.delete("user");
+<em>// Output -> `null`</em>
+
+console.log(await pg.all());
+<em>// Data -> {
+//   user: { name: "Alex" },
+//   info: { name: "Alex", gender: "male", age: 33, children: [ "Klaudia", "Ada" ] }
+// }</em>
+                </code>
+            </pre>
+      </div>
+    </main>
+    <footer>
+      <hr />
+      <p>
+        Made with ❤ by
+        <a href="https://github.com/tejasag">Tejas Agarwal</a> and
+        <a href="https://github.com/skorotkiewicz">Sebastian Korotkiewicz</a>
+      </p>
+      <p>
+        <small>MIT License</small>
+      </p>
+    </footer>
   </body>
 </html>
