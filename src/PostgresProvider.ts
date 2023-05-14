@@ -1,4 +1,4 @@
-import { Pool, PoolClient, Collection } from "../deps.ts";
+import { Pool, PoolClient } from "../deps.ts";
 
 /** Simple and easy to use key-v PostgreSQL provider for Deno.
  * @param tablename The name of the table in the database
@@ -13,7 +13,7 @@ import { Pool, PoolClient, Collection } from "../deps.ts";
  */
 export class PostgresProvider {
   private db: Pool;
-  private collection: Collection;
+  private collection: Map<any, any>;
   private tablename: String;
   private clientOptions: Object;
   constructor(
@@ -32,7 +32,7 @@ export class PostgresProvider {
       port: port || 5432,
     };
     this.tablename = tablename;
-    this.collection = new Collection();
+    this.collection = new Map();
     this.db = new Pool(this.clientOptions, 20);
   }
 
