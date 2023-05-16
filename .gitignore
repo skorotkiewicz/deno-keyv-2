@@ -1,2 +1,3 @@
 test/postgres_local.ts
 test/db.sqlite
+*_bdev

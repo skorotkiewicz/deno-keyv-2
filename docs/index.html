@@ -3,19 +3,17 @@
   <head>
     <link rel="icon" href="https://via.placeholder.com/70x70" />
     <link rel="stylesheet" href="./mvp.css" />
+    <link href="./prism/prism.css" rel="stylesheet" />
 
     <meta charset="UTF-8" />
-    <meta name="description" content="" />
+    <meta
+      name="description"
+      content="Keyv2 is a simple and lightweight, easy to use database wrapper made for the Javascript runtime envoirement, Deno. The wrapper is designed for quick setup and fast results."
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>Deno-Keyv-2</title>
-
-    <style>
-      em {
-        color: #a2a2a2;
-      }
-    </style>
+    <title>Keyv2 - simple and lightweight database wrapper</title>
   </head>
 
   <body>
@@ -99,21 +97,21 @@
         </header>
 
         <h3>SQLite</h3>
-        <pre>
-                <code>
-import { SqliteProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
 
-<em>// This make a new file called `db.sqlite` in your folder.
-// The second value is the name of the database. You can name is anything you want :)</em>
+        <pre
+          class="language-javascript"
+        ><code>import { SqliteProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
+
+// This make a new file called `db.sqlite` in your folder.
+// The second value is the name of the database. You can name is anything you want :)
 
 const db = new SqliteProvider("db.sqlite", "tablename");
-                </code>
-            </pre>
+</code></pre>
 
         <h3>PostgreSQL</h3>
-        <pre>
-                <code>
-import { PostgresProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
+        <pre
+          class="language-javascript"
+        ><code>import { PostgresProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
 
 const db = new PostgresProvider(
     "tablename",
@@ -124,42 +122,40 @@ const db = new PostgresProvider(
 );
 await db.init();
 
-<em>// Set an object in the database.
-//            Key           Value</em>
+// Set an object in the database.
+//            Key           Value
 await db.set("user", { name: "Alex" });
-<em>// Data -> 'user': { 'name': 'Alex' }</em>
+// Data -> 'user': { 'name': 'Alex' }
 
 await db.set("user.gender", "male");
-<em>// Data -> 'user': { 'name': 'Alex', 'gender': 'male' }</em>
+// Data -> 'user': { 'name': 'Alex', 'gender': 'male' }
 
 await db.set("user.age", 33);
-<em>// Data -> 'user': { 'name': 'Alex', 'gender': 'male', 'age': 33}</em>
+// Data -> 'user': { 'name': 'Alex', 'gender': 'male', 'age': 33}
 
 await pg.set("user.children", ["Klaudia", "Ada"]);
-<em>// Data -> 'user': {"name":"Alex","gender":"male","age":33,"children":["Klaudia","Ada"]}</em>
+// Data -> 'user': {"name":"Alex","gender":"male","age":33,"children":["Klaudia","Ada"]}
 
-<em>// Remove value from key</em>
+// Remove value from key
 await db.set("user.name", null);
-<em>// Output -> { 'gender': 'male', 'age': 33}</em>
+// Output -> { 'gender': 'male', 'age': 33}
 
-<em>// Getting the data from the database</em>
+// Getting the data from the database
 await db.get("user");
-<em>// Output -> { 'name': 'Alex', 'gender': 'male', 'age': 33}</em>
+// Output -> { 'name': 'Alex', 'gender': 'male', 'age': 33}
 
 await db.get("user.age");
-<em>// Output -> 33</em>
+// Output -> 33
 
-<em>// Remove `user` key</em>
+// Remove `user` key
 await db.delete("user");
-<em>// Output -> `null`</em>
+// Output -> `null`
 
 console.log(await pg.all());
-<em>// Data -> {
+// Data -> {
 //   user: { name: "Alex" },
 //   info: { name: "Alex", gender: "male", age: 33, children: [ "Klaudia", "Ada" ] }
-// }</em>
-                </code>
-            </pre>
+// }</code></pre>
       </div>
     </main>
     <footer>
@@ -173,5 +169,6 @@ console.log(await pg.all());
         <small>MIT License</small>
       </p>
     </footer>
+    <script src="./prism/prism.js"></script>
   </body>
 </html>
