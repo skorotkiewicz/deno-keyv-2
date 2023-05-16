@@ -22,7 +22,7 @@ console.log(age);
 await db.push("user.children", "Suzy");
 await db.push("user.name", "Johnson");
 
-const all = await db.all();
+const all = db.all();
 console.log("all:", all);
 
 console.log(await db.has("user.hehe"));

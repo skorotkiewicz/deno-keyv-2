@@ -163,18 +163,16 @@ export class SqliteProvider {
    */
   all() {
     const fetched = [...this.db.query(`SELECT * FROM ${this.tablename}`)];
-    // let fetched = [
-    //   ...this.db.query(`SELECT * FROM ${this.tablename}`).asObjects(),
-    // ];
 
-    const data = new Map();
-    for (const _o of fetched) {
-      // let value = JSON.parse(o.value);
-      // data.set(o.key, value);
-      // TODO
-      // console.log(">>>", o[0].value);
-    }
-    return Object.fromEntries(data);
+    // const data = new Map();
+    // for (const o of fetched) {
+    //   // let value = JSON.parse(o.value);
+    //   // data.set(o.key, value);
+    //   // TODO
+    //   // console.log(">>>", o.keys);
+    // }
+    // return Object.fromEntries(data);
+    return JSON.stringify(fetched);
   }
 
   /**
