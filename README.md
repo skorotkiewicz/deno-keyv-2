@@ -13,12 +13,23 @@ Keyv is a simple and lightweight, easy to use database wrapper made for the Java
 - Supports dot notation.
   _And much more!_
 
+## Usage
+
+- [Stable](https://deno.land/x/keyv2)
+  ```ts
+  import { PostgresProvider } from "https://deno.land/x/keyv2/mod.ts";
+  ```
+- [Main](https://github.com/skorotkiewicz/deno-keyv-2) (**Main may contain bugs**)
+  ```ts
+  import { PostgresProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
+  ```
+
 ## Examples
 
 ### SQLite
 
 ```typescript
-import { SqliteProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
+import { SqliteProvider } from "https://deno.land/x/keyv2/mod.ts";
 
 const db = new SqliteProvider("db.sqlite", "tablename");
 ```
@@ -26,7 +37,7 @@ const db = new SqliteProvider("db.sqlite", "tablename");
 ### PostgreSQL
 
 ```typescript
-import { PostgresProvider } from "https://cdn.jsdelivr.net/gh/skorotkiewicz/deno-keyv-2/mod.ts";
+import { PostgresProvider } from "https://deno.land/x/keyv2/mod.ts";
 
 const db = new PostgresProvider(
   "tablename",
